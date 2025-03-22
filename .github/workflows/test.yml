@@ -14,16 +14,46 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Print environment info
+        run: |
+          echo "GitHub ref: ${{ github.ref }}"
+          echo "GitHub event: ${{ github.event_name }}"
+          echo "Runner OS: ${{ runner.os }}"
+          ls -la
 
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.21'
           check-latest: true
+          
+      - name: Print Go version
+        run: go version
 
       - name: Install dependencies
         run: go mod download
+        
+      - name: Print go.mod info
+        run: |
+          echo "Go module information:"
+          go list -m all
+      
+      - name: Setup test environment
+        run: |
+          echo "Test files discovered:"
+          find . -name "*_test.go" | sort
 
       - name: Run Tests
-        run: go test -v ./... 
+        run: go test -v ./... 2>&1 | tee test_output.log
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: test_output.log
+          
+      - name: Summary
+        run: echo "Tests completed at $(date)" 
