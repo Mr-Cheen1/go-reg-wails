@@ -8,6 +8,9 @@ on:
 
 permissions:
   contents: read
+  actions: read
+  checks: write
+  pull-requests: write
 
 jobs:
   test:
@@ -50,10 +53,14 @@ jobs:
         run: go test -v ./... 2>&1 | tee test_output.log
       
       - name: Upload test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: test_output.log
+          retention-days: 90
           
       - name: Summary
-        run: echo "Tests completed at $(date)" 
+        run: |
+          echo "Tests completed at $(date)"
+          echo "### Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "Tests completed at $(date)" >> $GITHUB_STEP_SUMMARY 

@@ -8,6 +8,9 @@ on:
 
 permissions:
   contents: read
+  actions: read
+  checks: write
+  pull-requests: write
 
 jobs:
   build:
@@ -76,10 +79,15 @@ jobs:
           ls -la build/bin || echo "No build artifacts found"
           
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-build
           path: build/bin
+          retention-days: 90
+          if-no-files-found: warn
           
       - name: Summary
-        run: echo "Build completed at $(Get-Date)" 
+        run: |
+          echo "Build completed at $(Get-Date)"
+          echo "### Build Summary" | Out-File -Append -FilePath $env:GITHUB_STEP_SUMMARY
+          echo "Build completed successfully." | Out-File -Append -FilePath $env:GITHUB_STEP_SUMMARY 

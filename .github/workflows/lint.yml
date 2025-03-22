@@ -8,6 +8,9 @@ on:
 
 permissions:
   contents: read
+  actions: read
+  checks: write
+  pull-requests: write
 
 jobs:
   golangci:
@@ -43,6 +46,22 @@ jobs:
         with:
           version: latest
           args: --verbose
+          
+      - name: Run standalone linter for logs
+        run: |
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+          golangci-lint run --verbose > lint_output.txt || true
+      
+      - name: Upload lint results
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-results
+          path: lint_output.txt
+          retention-days: 90
+          if-no-files-found: warn
 
       - name: Summary
-        run: echo "Lint completed at $(date)" 
+        run: |
+          echo "Lint completed at $(date)" 
+          echo "### Lint Summary" >> $GITHUB_STEP_SUMMARY
+          echo "Lint completed at $(date)" >> $GITHUB_STEP_SUMMARY 
