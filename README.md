@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="frontend/src/assets/icon.png" width="150">
+  <img src="build/appicon.png" width="150">
 </p>
 
 <p align="center">
