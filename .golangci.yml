@@ -1,0 +1,36 @@
+run:
+  go: '1.21'
+  timeout: 5m
+
+issues:
+  exclude-files:
+    - ".*_test.go$"
+  exclude-dirs:
+    - vendor
+    - third_party
+    - testdata
+    - examples
+    - Godeps
+    - builtin
+    - pkg/mod
+    - frontend
+
+linters:
+  enable:
+    - gofmt
+    - gofumpt
+    - govet
+    - gosimple
+    - staticcheck
+
+linters-settings:
+  gofmt:
+    simplify: true
+
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gosec
+    - path: pkg/mod/
+      linters:
+        - all 
