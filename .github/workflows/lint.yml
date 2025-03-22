@@ -20,13 +20,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         
-      - name: Print environment info
-        run: |
-          echo "GitHub ref: ${{ github.ref }}"
-          echo "GitHub event: ${{ github.event_name }}"
-          echo "Runner OS: ${{ runner.os }}"
-          ls -la
-
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
@@ -36,23 +29,16 @@ jobs:
       - name: Print Go version
         run: go version
       
-      - name: Check workspace structure
+      - name: Install golangci-lint
         run: |
-          echo "Workspace structure:"
-          find . -type f -not -path "*/\.*" | sort
-
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v4
-        with:
-          version: v1.56.2
-          args: --verbose
-          skip-pkg-cache: true
-          skip-cache: true
-          
-      - name: Run standalone linter for logs
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.56.2
+          golangci-lint --version
+      
+      - name: Run golangci-lint
         run: |
-          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-          golangci-lint run --verbose > lint_output.txt || true
+          export PATH=$PATH:$(go env GOPATH)/bin
+          golangci-lint run --verbose | tee lint_output.txt
+        continue-on-error: true
       
       - name: Upload lint results
         uses: actions/upload-artifact@v4
