@@ -1,6 +1,5 @@
 # Go
-/build/bin/
-/build/windows/
+# Не игнорируем build
 *.exe
 *.exe~
 *.dll
@@ -9,9 +8,6 @@
 *.test
 *.out
 go.work
-
-# Сохраняем логотип
-!/build/appicon.png
 
 # Node
 node_modules/
