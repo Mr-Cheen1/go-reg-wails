@@ -23,8 +23,8 @@ func NewApp(storage storage.Storage) *App {
 	}
 }
 
-// startup вызывается при запуске приложения
-func (a *App) startup(ctx context.Context) {
+// Startup вызывается при запуске приложения
+func (a *App) Startup(ctx context.Context) {
 	a.ctx = ctx
 	var err error
 	a.products, err = a.storage.Load()
