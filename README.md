@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="build/appicon.png" width="150">
+  <img src="https://github.com/Mr-Cheen1/go-reg-wails/raw/main/build/appicon.png" width="150">
 </p>
 
 <p align="center">
