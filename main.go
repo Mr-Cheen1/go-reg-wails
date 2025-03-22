@@ -42,7 +42,6 @@ func main() {
 			DisableWindowIcon:    false,
 		},
 	})
-
 	if err != nil {
 		log.Fatal(err)
 	}

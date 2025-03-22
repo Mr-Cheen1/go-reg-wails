@@ -70,7 +70,7 @@ func TestApp_GetProducts(t *testing.T) {
 	// Создаем мок хранилища и приложение
 	mockStorage := NewMockStorage(testProducts)
 	app := NewApp(mockStorage)
-	app.startup(context.Background())
+	app.Startup(context.Background())
 
 	// Проверяем, что GetProducts возвращает все продукты
 	result := app.GetProducts()
@@ -88,7 +88,7 @@ func TestApp_SearchProducts(t *testing.T) {
 	// Создаем мок хранилища и приложение
 	mockStorage := NewMockStorage(testProducts)
 	app := NewApp(mockStorage)
-	app.startup(context.Background())
+	app.Startup(context.Background())
 
 	// Тест 1: Поиск по слову "Продукт"
 	result := app.SearchProducts("Продукт")
@@ -128,7 +128,7 @@ func TestApp_AddProduct(t *testing.T) {
 
 	// Создаем приложение
 	app := NewApp(mockStorage)
-	app.startup(context.Background())
+	app.Startup(context.Background())
 
 	// Добавляем новый продукт
 	err := app.AddProduct("Новый продукт", "2.5")
@@ -173,7 +173,7 @@ func TestApp_UpdateProduct(t *testing.T) {
 
 	// Создаем приложение
 	app := NewApp(mockStorage)
-	app.startup(context.Background())
+	app.Startup(context.Background())
 
 	// Обновляем существующий продукт
 	err := app.UpdateProduct(1, "Обновленный продукт", "3.5")
@@ -219,7 +219,7 @@ func TestApp_DeleteProduct(t *testing.T) {
 
 	// Создаем приложение
 	app := NewApp(mockStorage)
-	app.startup(context.Background())
+	app.Startup(context.Background())
 
 	// Удаляем продукт с ID=2
 	err := app.DeleteProduct(2)
@@ -260,7 +260,7 @@ func TestApp_DeleteProducts(t *testing.T) {
 
 	// Создаем приложение
 	app := NewApp(mockStorage)
-	app.startup(context.Background())
+	app.Startup(context.Background())
 
 	// Удаляем несколько продуктов
 	err := app.DeleteProducts([]int{2, 4})
