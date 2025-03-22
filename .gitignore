@@ -1,6 +1,9 @@
 # Go
 # Не игнорируем build
-*.exe
+# Игнорируем .exe файлы, кроме тех, что в директории build
+/*.exe
+/backend/**/*.exe
+/frontend/**/*.exe
 *.exe~
 *.dll
 *.so
