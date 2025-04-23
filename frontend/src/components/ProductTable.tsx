@@ -65,9 +65,9 @@ export function ProductTable({
             </tr>
           </thead>
           <tbody>
-            {products.length === 0 ? (
+            {!products || products.length === 0 ? (
               <tr>
-                <td colSpan={4} className="text-center py-4">
+                <td colSpan={4} className="text-center py-8 text-lg">
                   Нет данных для отображения
                 </td>
               </tr>
