@@ -85,16 +85,31 @@ function App() {
 
   // Поиск продуктов
   const handleSearch = async (query: string) => {
-    setSearchQuery(query);
     try {
-      const data = await SearchProducts(query);
-      setProducts(data);
+      setSearchQuery(query);
+      // Проверка на специальные символы или потенциально проблемные запросы
+      const safeQuery = query.trim();
+      const data = await SearchProducts(safeQuery);
+      
+      // Убедимся, что data - это массив (даже если пустой)
+      if (Array.isArray(data)) {
+        setProducts(data);
+      } else {
+        // Если данные не являются массивом, используем пустой массив
+        setProducts([]);
+        console.error("Получены некорректные данные:", data);
+      }
     } catch (error) {
+      console.error("Ошибка при поиске:", error);
+      // Очистка поиска при ошибке
+      setSearchQuery("");
       toast({
         title: "Ошибка",
-        description: "Ошибка при поиске",
+        description: "Ошибка при поиске. Попробуйте другой запрос.",
         variant: "destructive",
       });
+      // При ошибке загружаем все продукты
+      loadProducts();
     }
   };
 

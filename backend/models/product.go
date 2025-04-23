@@ -19,13 +19,27 @@ func (p Products) Search(query string) Products {
 		return p
 	}
 
+	// Безопасная обработка запроса
+	query = strings.TrimSpace(query)
+	if len(query) == 0 {
+		return p
+	}
+
 	var result Products
 	query = strings.ToLower(query)
+
+	// Безопасный поиск с ограничением длины запроса
+	if len(query) > 50 {
+		query = query[:50]
+	}
+
 	for _, product := range p {
 		if strings.Contains(strings.ToLower(product.Name), query) {
 			result = append(result, product)
 		}
 	}
+
+	// Возвращаем результаты поиска, даже если они пустые
 	return result
 }
 
