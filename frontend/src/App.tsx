@@ -1,4 +1,12 @@
 import { useEffect, useState } from "react";
+
+// Декларация для Wails runtime
+declare global {
+  interface Window {
+    runtime?: unknown;
+    go?: unknown;
+  }
+}
 import { GetProducts, SearchProducts, DeleteProducts } from "../wailsjs/go/main/App";
 import { ProductTable } from "./components/ProductTable";
 import { AddProductDialog } from "./components/AddProductDialog";
@@ -15,8 +23,33 @@ import { Label } from "./components/ui/label";
 
 type Product = models.Product;
 
+// Функция ожидания готовности Wails runtime с таймаутом
+const waitForWailsRuntime = (): Promise<void> => {
+  return new Promise((resolve) => {
+    // Wails использует window.go для биндингов Go функций
+    if (window.go) {
+      resolve();
+      return;
+    }
+    
+    let attempts = 0;
+    const maxAttempts = 100; // 5 секунд максимум (100 * 50ms)
+    
+    const checkRuntime = () => {
+      attempts++;
+      if (window.go || attempts >= maxAttempts) {
+        resolve();
+      } else {
+        setTimeout(checkRuntime, 50);
+      }
+    };
+    checkRuntime();
+  });
+};
+
 function App() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [isReady, setIsReady] = useState(false);
   const [searchQuery, setSearchQuery] = useState(() => {
     const savedSearchQuery = localStorage.getItem('searchQuery');
     return savedSearchQuery || "";
@@ -33,14 +66,20 @@ function App() {
   });
   const { toast } = useToast();
 
-  // Загрузка продуктов при монтировании компонента
+  // Ожидание готовности Wails runtime и загрузка продуктов
   useEffect(() => {
-    loadProducts();
-    
-    // Если есть сохраненный поисковый запрос, выполняем поиск
-    if (searchQuery) {
-      handleSearch(searchQuery);
-    }
+    const init = async () => {
+      await waitForWailsRuntime();
+      setIsReady(true);
+      
+      // Если есть сохраненный поисковый запрос, выполняем поиск
+      if (searchQuery) {
+        handleSearch(searchQuery);
+      } else {
+        loadProducts();
+      }
+    };
+    init();
   }, []);
 
   // Сохранение состояния фильтрации при изменении
@@ -57,15 +96,17 @@ function App() {
   const loadProducts = async () => {
     try {
       const data = await GetProducts();
-      setProducts(data);
+      // Убедимся, что data - это массив
+      const productsArray = Array.isArray(data) ? data : [];
+      setProducts(productsArray);
       
       // Загружаем сохраненные выбранные продукты
       const savedSelectedProducts = localStorage.getItem('selectedProducts');
-      if (savedSelectedProducts) {
+      if (savedSelectedProducts && productsArray.length > 0) {
         const parsedSelectedProducts = JSON.parse(savedSelectedProducts);
         // Фильтруем сохраненные ID, чтобы убедиться, что они существуют в текущих данных
         const validSelectedProducts: Record<number, boolean> = {};
-        data.forEach(product => {
+        productsArray.forEach(product => {
           if (parsedSelectedProducts[product.id]) {
             validSelectedProducts[product.id] = true;
           }
@@ -75,6 +116,8 @@ function App() {
         setSelectedProducts({});
       }
     } catch (error) {
+      console.error("Ошибка загрузки продуктов:", error);
+      setProducts([]);
       toast({
         title: "Ошибка",
         description: "Не удалось загрузить данные",
@@ -189,6 +232,15 @@ function App() {
     ? products.filter(product => selectedProducts[product.id])
     : products;
 
+  // Показываем загрузку пока Wails runtime не готов
+  if (!isReady) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-lg">Загрузка...</div>
+      </div>
+    );
+  }
+
   return (
     <ToastProvider>
       <div className="flex flex-col h-screen overflow-hidden">
@@ -218,21 +270,19 @@ function App() {
                 <Button variant="outline" onClick={handleClearSelection}>
                   Снять выделение
                 </Button>
-                <Button variant="destructive" onClick={prepareDeleteSelected}>
-                  Удалить выбранные
-                </Button>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="flex-1 overflow-hidden">
-          <div className="container mx-auto px-4 py-4 h-full">
+        <div className="flex-1 overflow-hidden pb-4">
+          <div className="container mx-auto px-4 pt-4 h-full">
             <ProductTable
               products={filteredProducts}
               selectedProducts={selectedProducts}
               onSelect={handleSelectProduct}
               onEdit={handleEdit}
+              onDelete={prepareDeleteSelected}
             />
           </div>
         </div>

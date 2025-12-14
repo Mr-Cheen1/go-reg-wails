@@ -25,14 +25,17 @@ func main() {
 
 	// Создаем приложение Wails
 	err := wails.Run(&options.App{
-		Title:  "Редактор базы данных",
-		Width:  1024,
-		Height: 768,
+		Title:     "Редактор базы данных",
+		Width:     800,
+		Height:    650,
+		MinWidth:  700,
+		MinHeight: 500,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		OnStartup:        app.Startup,
+		OnDomReady:       app.OnDomReady,
 		Bind: []interface{}{
 			app,
 		},
