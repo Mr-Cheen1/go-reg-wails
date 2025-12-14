@@ -27,9 +27,17 @@
 
 ### Требования
 
-- Go 1.21 или выше
+- Go 1.22 или выше
 - Node.js 18 или выше
-- Wails CLI
+- Wails CLI v2
+
+### Установка Node.js (Windows)
+
+Для Windows можно использовать скрипт автоматической установки:
+
+```powershell
+.\install-nodejs.ps1
+```
 
 ### Установка Wails CLI
 
@@ -78,47 +86,74 @@ go test ./... -cover
 
 ```
 go-reg-wails/
-├── 📁 backend/              # Бэкенд на Go
-│   ├── 📁 models/          # Модели данных
-│   │   ├── product.go     # Структура продукта и методы работы с ним
-│   │   └── product_test.go # Тесты для продуктов
-│   ├── 📁 storage/         # Слой хранения данных
-│   │   ├── excel.go       # Работа с Excel файлом
-│   │   ├── storage.go     # Интерфейс хранилища
-│   │   └── excel_test.go  # Тесты для хранилища
-│   └── 📁 utils/           # Вспомогательные функции
-│       ├── calculator.go  # Калькулятор времени
+├── 📁 backend/                # Бэкенд на Go
+│   ├── 📁 models/            # Модели данных
+│   │   ├── product.go       # Структура продукта и методы работы с ним
+│   │   └── product_test.go  # Тесты для продуктов
+│   ├── 📁 storage/           # Слой хранения данных
+│   │   ├── excel.go         # Работа с Excel файлом
+│   │   ├── storage.go       # Интерфейс хранилища
+│   │   └── excel_test.go    # Тесты для хранилища
+│   └── 📁 utils/             # Вспомогательные функции
+│       ├── calculator.go    # Калькулятор времени
 │       └── calculator_test.go # Тесты для калькулятора
-├── 📁 frontend/             # Фронтенд на React
-│   ├── 📁 src/             # Исходный код React
-│   │   ├── 📁 components/  # React компоненты
-│   │   ├── 📁 hooks/       # React хуки
-│   │   ├── App.tsx        # Основной компонент приложения
-│   │   └── main.tsx       # Точка входа
-│   ├── package.json       # Зависимости NPM
-│   └── tailwind.config.js # Конфигурация Tailwind CSS
-├── 📝 app.go                # Логика приложения
-├── 📝 app_test.go           # Тесты для логики приложения
-├── 📝 main.go               # Точка входа в приложение
-├── 📊 database.xlsx         # Файл базы данных
-└── 📖 README.md             # Документация
+├── 📁 build/                  # Ресурсы сборки
+│   ├── appicon.png          # Иконка приложения
+│   ├── 📁 bin/              # Скомпилированные файлы
+│   │   ├── go-reg-wails.exe # Исполняемый файл
+│   │   └── database.xlsx    # Файл базы данных
+│   └── 📁 windows/          # Windows-специфичные ресурсы
+├── 📁 frontend/               # Фронтенд на React
+│   ├── 📁 src/               # Исходный код React
+│   │   ├── 📁 components/   # React компоненты
+│   │   │   ├── 📁 ui/       # UI компоненты (Radix UI)
+│   │   │   ├── AddProductDialog.tsx
+│   │   │   ├── EditProductDialog.tsx
+│   │   │   ├── ProductTable.tsx
+│   │   │   └── Toaster.tsx
+│   │   ├── 📁 hooks/        # React хуки
+│   │   │   └── use-toast.ts
+│   │   ├── 📁 lib/          # Утилиты
+│   │   │   └── utils.ts
+│   │   ├── App.tsx          # Основной компонент приложения
+│   │   ├── main.tsx         # Точка входа
+│   │   └── index.css        # Глобальные стили
+│   ├── 📁 wailsjs/          # Автогенерируемые биндинги Wails
+│   ├── package.json         # Зависимости NPM
+│   ├── tailwind.config.js   # Конфигурация Tailwind CSS
+│   ├── tsconfig.json        # Конфигурация TypeScript
+│   └── vite.config.ts       # Конфигурация Vite
+├── 📁 .github/workflows/     # CI/CD конфигурация
+├── 📝 app.go                 # Логика приложения
+├── 📝 app_test.go            # Тесты для логики приложения
+├── 📝 main.go                # Точка входа в приложение
+├── 📝 go.mod                 # Go модули
+├── 📝 go.sum                 # Контрольные суммы зависимостей
+├── 📝 wails.json             # Конфигурация Wails
+├── 📝 install-nodejs.ps1     # Скрипт установки Node.js (Windows)
+└── 📖 README.md              # Документация
 ```
 
 ## 🔧 Технологии
 
 ### Бэкенд
 
-- **Go** - основной язык программирования
-- **Wails** - фреймворк для создания десктопных приложений
-- **excelize** - библиотека для работы с Excel файлами
+| Технология | Версия | Описание |
+|------------|--------|----------|
+| **Go** | 1.22+ | Основной язык программирования |
+| **Wails** | v2.10.1 | Фреймворк для создания десктопных приложений |
+| **excelize** | v2.9.0 | Библиотека для работы с Excel файлами |
 
 ### Фронтенд
 
-- **React** - библиотека для создания пользовательского интерфейса
-- **TypeScript** - типизированный JavaScript
-- **Tailwind CSS** - утилитарный CSS-фреймворк
-- **shadcn/ui** - компоненты пользовательского интерфейса
-- **Vite** - инструмент сборки
+| Технология | Версия | Описание |
+|------------|--------|----------|
+| **React** | 18.2.0 | Библиотека для создания пользовательского интерфейса |
+| **TypeScript** | 5.4.2 | Типизированный JavaScript |
+| **Vite** | 5.1.6 | Инструмент сборки |
+| **Tailwind CSS** | 3.4.1 | Утилитарный CSS-фреймворк |
+| **Radix UI** | - | Примитивы для UI компонентов |
+| **Lucide React** | 0.363.0 | Библиотека иконок |
 
 ## 🔄 Логика работы приложения
 
@@ -168,65 +203,6 @@ flowchart TD
     class A,B,C process
     class D,E,F,G,H,I action
     class G4,H5,I3 storage
-```
-
-## 📊 Архитектура приложения
-
-```mermaid
-classDiagram
-    class App {
-        -context.Context ctx
-        -storage.Storage storage
-        -models.Products products
-        +startup(ctx)
-        +GetProducts() []Product
-        +SearchProducts(query) []Product
-        +AddProduct(name, timeCalculation) error
-        +UpdateProduct(id, name, timeCalculation) error
-        +DeleteProduct(id) error
-        +DeleteProducts(ids) error
-    }
-  
-    class Product {
-        +int ID
-        +string Name
-        +float64 ProcessingTime
-        +string TimeCalculation
-    }
-  
-    class Products {
-        +Search(query) Products
-        +Delete(id)
-        +DeleteMultiple(ids)
-        +Update(product)
-        +GetNextID() int
-    }
-  
-    class Storage {
-        <<interface>>
-        +Load() (Products, error)
-        +Save(products) error
-        +Close() error
-    }
-  
-    class ExcelStorage {
-        -*excelize.File file
-        -string filename
-        +WithFilename(filename) *ExcelStorage
-        +Load() (Products, error)
-        +Save(products) error
-        +Close() error
-    }
-  
-    class Calculator {
-        +CalculateTime(timeStr) float64
-    }
-  
-    App --> Storage : использует
-    App --> Products : хранит
-    ExcelStorage ..|> Storage : реализует
-    Products o-- Product : содержит
-    App --> Calculator : использует
 ```
 
 ## 📝 Лицензия

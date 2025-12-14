@@ -7,6 +7,7 @@ import (
 	"github.com/Mr-Cheen1/go-reg-wails/backend/models"
 	"github.com/Mr-Cheen1/go-reg-wails/backend/storage"
 	"github.com/Mr-Cheen1/go-reg-wails/backend/utils"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App структура приложения
@@ -26,11 +27,19 @@ func NewApp(storage storage.Storage) *App {
 // Startup вызывается при запуске приложения
 func (a *App) Startup(ctx context.Context) {
 	a.ctx = ctx
+	
 	var err error
 	a.products, err = a.storage.Load()
 	if err != nil {
 		log.Printf("Ошибка загрузки данных: %v\n", err)
 	}
+}
+
+// OnDomReady вызывается когда DOM готов
+func (a *App) OnDomReady(ctx context.Context) {
+	// Принудительно устанавливаем размер окна когда DOM готов
+	runtime.WindowSetSize(ctx, 800, 650)
+	runtime.WindowCenter(ctx)
 }
 
 // GetProducts возвращает все продукты

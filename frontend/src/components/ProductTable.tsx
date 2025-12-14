@@ -1,4 +1,4 @@
-import { Pencil, ArrowUpDown } from "lucide-react";
+import { Pencil, ArrowUpDown, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
 import { models } from "../../wailsjs/go/models";
@@ -11,6 +11,7 @@ interface ProductTableProps {
   selectedProducts: Record<number, boolean>;
   onSelect: (id: number, isSelected: boolean) => void;
   onEdit: (product: Product) => void;
+  onDelete: () => void;
 }
 
 export function ProductTable({
@@ -18,6 +19,7 @@ export function ProductTable({
   selectedProducts,
   onSelect,
   onEdit,
+  onDelete,
 }: ProductTableProps) {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(() => {
     const savedSortDirection = localStorage.getItem('sortDirection');
@@ -45,13 +47,26 @@ export function ProductTable({
     onSelect(product.id, !selectedProducts[product.id]);
   };
 
+  // Проверяем, есть ли выбранные продукты
+  const hasSelectedProducts = Object.values(selectedProducts).some(value => value);
+
   return (
     <div className="border rounded-md flex flex-col h-full">
-      <div className="overflow-auto flex-1" style={{ maxHeight: 'calc(100vh - 180px)' }}>
+      <div className="overflow-auto flex-1">
         <table className="w-full border-collapse">
           <thead className="sticky-header">
             <tr>
-              <th className="w-[50px] px-4 py-2 text-left font-medium text-muted-foreground"></th>
+              <th className="w-[50px] px-4 py-2 text-center font-medium text-muted-foreground">
+                <Button
+                  variant={hasSelectedProducts ? "destructive" : "ghost"}
+                  size="icon"
+                  onClick={onDelete}
+                  disabled={!hasSelectedProducts}
+                  className={`h-7 w-7 ${!hasSelectedProducts ? 'text-gray-300 hover:text-gray-300 hover:bg-transparent' : ''}`}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </th>
               <th className="px-4 py-2 text-left font-medium text-muted-foreground">
                 <div className="flex items-center">
                   Наименование
@@ -109,7 +124,6 @@ export function ProductTable({
           </tbody>
         </table>
       </div>
-      <div className="h-4"></div>
     </div>
   );
 } 
